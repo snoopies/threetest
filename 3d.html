@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>显示带有MTL材质的OBJ文件</title>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/MTLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/OBJLoader.js"></script>
+    <script>
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const mtlLoader = new THREE.MTLLoader();
+      mtlLoader.load(
+        "block.mtl",
+        function (materials) {
+          materials.preload();
+
+          const objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials(materials);
+          objLoader.load(
+            "block.obj",
+            function (object) {
+              scene.add(object);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+            },
+            function (error) {
+              console.log("An error happened: " + error);
+            }
+          );
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+        },
+        function (error) {
+          console.log("An error happened: " + error);
+        }
+      );
+
+      const ambientLight = new THREE.AmbientLight(0x404040); // 环境光
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff); // 平行光
+      directionalLight.position.set(1, 1, 1);
+      scene.add(directionalLight);
+
+      camera.position.z = 5;
+
+      const animate = function () {
+        requestAnimationFrame(animate);
+
+        renderer.render(scene, camera);
+      };
+
+      animate();
+    </script>
+  </body>
+</html>
