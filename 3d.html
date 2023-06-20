@@ -22,7 +22,7 @@
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       const mesh = new THREE.Object3D();
       const mtlLoader = new THREE.MTLLoader();
-      mtlLoader.load('block.mtl', function (materials) {
+      mtlLoader.load('a380.mtl', function (materials) {
         materials.preload();
         const objLoader = new THREE.OBJLoader();
         objLoader.setMaterials(materials);
